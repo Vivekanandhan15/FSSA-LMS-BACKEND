@@ -1,15 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <title>My Course</title>
+    <title>My Courses</title>
+
     <link rel="stylesheet" href="../styles/navbar.css" />
     <link rel="stylesheet" href="../styles/mycourse.css" />
   </head>
+
   <body>
     <div class="layout">
-      <!-- Navbar -->
-      <nav class="navbar">
-        <div class="nav-logo">freshworks</div>
+      <!-- NAVBAR -->
+      <nav class="navbar" id="sidebar">
+        <div class="nav-top">
+          <div class="nav-logo"><img src="../assets/fssa.png" style="width: 30px;margin-top:20px;"/> FSSA</div>
+
+          <button
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Toggle navigation"
+          >
+            ☰
+          </button>
+        </div>
+
         <div class="nav-menu">
           <a href="./dashboard.html">Dashboard</a>
           <a class="active" href="./mycourse.html">My Course</a>
@@ -19,49 +32,41 @@
         </div>
       </nav>
 
-      <!-- Main -->
-      <div class="main">
-        <div class="header">
+      <!-- MAIN -->
+      <main class="main">
+        <header class="header">
           <div>
-            <h2>Hi! User name</h2>
+            <h2>Hi! User</h2>
             <small>Freshworks STS Software Academy</small>
           </div>
+
           <div class="user">
             <div class="avatar">U</div>
-            <span>User name</span>
+            <span>User</span>
           </div>
+        </header>
+
+        <!-- SEARCH -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="search"
+            placeholder="Search courses..."
+            class="search-input"
+          />
         </div>
 
-        <div class="grid">
-          <a href="./python.html">
-            <div class="card red">
-              <h3>Python</h3>
-              <span>🐍</span>
-            </div>
-          </a>
+        <!-- COURSES -->
+        <section class="course-grid">
+           <!-- Populated by JS -->
+        </section>
 
-          <a href="./html5.html">
-            <div class="card blue">
-              <h3>HTML 5</h3>
-              <span>🌐</span>
-            </div>
-          </a>
-
-          <a href="./english.html">
-            <div class="card purple">
-              <h3>English</h3>
-              <span>📘</span>
-            </div>
-          </a>
-
-          <a href="./life-skills.html">
-            <div class="card pink">
-              <h3>Life Skill</h3>
-              <span>💡</span>
-            </div>
-          </a>
-        </div>
-      </div>
+        <!-- NO RESULTS -->
+        <p id="noResults" class="no-results" style="display:none;">No courses found.</p>
+      </main>
     </div>
+
+    <script src="../scripts/navbar.js" type="module"></script>
+    <script src="../scripts/mycourse.js" type="module"></script>
   </body>
 </html>

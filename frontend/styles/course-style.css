@@ -466,12 +466,13 @@ ul {
 /* Add Buttons (Visible only in edit mode) */
 .add-topic-btn,
 .add-content-block-btn,
-.add-section-btn {
+#add-section-btn {
   display: none;
 }
 
 #edit-mode-toggle:checked ~ .course-wrapper .add-topic-btn,
-#edit-mode-toggle:checked ~ .course-wrapper .add-content-block-btn {
+#edit-mode-toggle:checked ~ .course-wrapper .add-content-block-btn,
+#edit-mode-toggle:checked ~ .course-wrapper #add-section-btn {
   display: block;
   margin: var(--spacing-md) 0;
   width: 100%;

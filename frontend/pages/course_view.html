@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course View - FSSA</title>
+    <link rel="stylesheet" href="../styles/course_view.css" />
+  </head>
+
+  <body>
+    <!-- BACK BUTTON -->
+    <a href="#" id="back-link" class="back-button">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      Back
+    </a>
+
+    <!-- Edit Mode Toggle (Admin Only) -->
+    <input
+      type="checkbox"
+      id="edit-mode-toggle"
+      class="edit-mode-checkbox admin-only"
+    />
+
+    <!-- COURSE CONTENT WRAPPER -->
+    <div class="course-wrapper">
+      <!-- COURSE HEADER -->
+      <header class="course-header" id="course-header">
+        <div class="course-header-content">
+          <div class="course-icon-large">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 6.042c1.383-1.123 3.446-1.708 5.75-1.708 2.303 0 4.366.585 5.75 1.708v12.75c-1.383-1.123-3.446-1.708-5.75-1.708-2.303 0-4.366.585-5.75 1.708m0-12.75c-1.383-1.123-3.446-1.708-5.75-1.708-2.303 0-4.366.585-5.75 1.708v12.75c1.383-1.123 3.446-1.708 5.75-1.708 2.303 0 4.366.585 5.75 1.708M12 4.5v15.25"
+              />
+            </svg>
+          </div>
+
+          <div class="course-header-info">
+            <h1 id="course-title">Loading...</h1>
+            <p id="course-summary"></p>
+            <div class="course-stats">
+              <span class="stat-item" id="course-students"> -- Students </span>
+              <span class="stat-item" id="course-duration"> -- Weeks </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-header-actions">
+          <div class="course-search-container">
+            <input
+              type="text"
+              class="course-search-input"
+              placeholder="Search topics..."
+            />
+          </div>
+          <label for="edit-mode-toggle" class="edit-mode-btn admin-only">
+            <span class="edit-mode-text">Edit Mode</span>
+          </label>
+        </div>
+      </header>
+
+      <!-- CONTENT CONTAINER -->
+      <div class="content-container">
+        <!-- SIDEBAR -->
+        <aside class="topics-sidebar">
+          <h3>Course Topics</h3>
+          <nav class="topics-nav" id="topics-nav"></nav>
+          <div class="admin-only" style="padding: 16px 14px">
+            <button
+              class="add-topic-btn"
+              id="add-section-btn"
+              style="width: 100%"
+            >
+              + Add Section
+            </button>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="course-content" id="main-content">
+          <div id="loader" style="text-align: center; padding: 50px">
+            <p>Loading course content...</p>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Save Changes -->
+    <button id="save-course-content" class="admin-only">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+        />
+        <polyline points="17 21 17 13 7 13 7 21" />
+        <polyline points="7 3 7 8 15 8" />
+      </svg>
+      Save Changes
+    </button>
+
+    <!-- EDITOR MODAL -->
+    <div id="editor-modal" class="editor-modal">
+      <div class="editor-modal-content">
+        <h2 id="modal-title">Edit Content</h2>
+
+        <div
+          id="topic-input-container"
+          class="hidden"
+          style="margin-bottom: 15px"
+        >
+          <label style="display: block; margin-bottom: 5px; font-weight: bold"
+            >Topic Heading:</label
+          >
+          <input
+            type="text"
+            id="modal-topic-heading"
+            style="
+              width: 100%;
+              padding: 8px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+            "
+          />
+        </div>
+
+        <div id="quill-editor" style="height: 300px; background: white"></div>
+
+        <div
+          class="modal-actions"
+          style="
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+          "
+        >
+          <button
+            onclick="closeEditor()"
+            style="
+              padding: 8px 16px;
+              border: 1px solid #ddd;
+              background: white;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            Cancel
+          </button>
+          <button
+            id="modal-save-btn"
+            onclick="saveContent()"
+            style="
+              padding: 8px 16px;
+              background: #10b981;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIX 1: Confirm Modal — replaces alert() / confirm() -->
+    <div id="confirm-modal" class="confirm-modal-overlay">
+      <div class="confirm-modal-box">
+        <div class="confirm-modal-icon">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <h3 id="confirm-modal-title">Are you sure?</h3>
+        <p id="confirm-modal-msg">This action cannot be undone.</p>
+        <div class="confirm-modal-actions">
+          <button class="btn-cancel" id="confirm-cancel-btn">Cancel</button>
+          <button class="btn-confirm" id="confirm-ok-btn">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIX 1: Input Modal — replaces prompt() for Add Section -->
+    <div id="input-modal" class="confirm-modal-overlay">
+      <div class="confirm-modal-box" style="text-align: left">
+        <h3 id="input-modal-title" style="margin-bottom: 16px">
+          Enter Details
+        </h3>
+        <input
+          type="text"
+          id="input-modal-field"
+          style="
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            outline: none;
+            box-sizing: border-box;
+          "
+          placeholder="Type here..."
+        />
+        <div class="confirm-modal-actions" style="justify-content: flex-end">
+          <button class="btn-cancel" id="input-cancel-btn">Cancel</button>
+          <button class="btn-confirm" id="input-ok-btn">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUILL -->
+    <link
+      href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <script>
+      /* ── showConfirm: replaces confirm() / alert() ── */
+      function showConfirm(
+        title,
+        message,
+        confirmLabel = "Confirm",
+        isDanger = false,
+        showCancel = true,
+      ) {
+        return new Promise((resolve) => {
+          const overlay = document.getElementById("confirm-modal");
+          const titleEl = document.getElementById("confirm-modal-title");
+          const msgEl = document.getElementById("confirm-modal-msg");
+          const okBtn = document.getElementById("confirm-ok-btn");
+          const cancelBtn = document.getElementById("confirm-cancel-btn");
+
+          titleEl.textContent = title;
+          msgEl.textContent = message;
+          okBtn.textContent = confirmLabel;
+          okBtn.classList.toggle("danger", isDanger);
+          cancelBtn.style.display = showCancel ? "" : "none";
+          overlay.classList.add("open");
+
+          const close = (result) => {
+            overlay.classList.remove("open");
+            okBtn.removeEventListener("click", onOk);
+            cancelBtn.removeEventListener("click", onCancel);
+            resolve(result);
+          };
+          const onOk = () => close(true);
+          const onCancel = () => close(false);
+          okBtn.addEventListener("click", onOk);
+          cancelBtn.addEventListener("click", onCancel);
+          overlay.addEventListener(
+            "click",
+            (e) => {
+              if (e.target === overlay) close(false);
+            },
+            { once: true },
+          );
+          const onKey = (e) => {
+            if (e.key === "Escape") {
+              close(false);
+              document.removeEventListener("keydown", onKey);
+            }
+          };
+          document.addEventListener("keydown", onKey);
+        });
+      }
+
+      /* ── showInput: replaces prompt() ── */
+      function showInput(title, placeholder = "", confirmLabel = "Add") {
+        return new Promise((resolve) => {
+          const overlay = document.getElementById("input-modal");
+          const titleEl = document.getElementById("input-modal-title");
+          const field = document.getElementById("input-modal-field");
+          const okBtn = document.getElementById("input-ok-btn");
+          const cancelBtn = document.getElementById("input-cancel-btn");
+
+          titleEl.textContent = title;
+          field.placeholder = placeholder;
+          field.value = "";
+          okBtn.textContent = confirmLabel;
+          overlay.classList.add("open");
+          setTimeout(() => field.focus(), 80);
+
+          const close = (value) => {
+            overlay.classList.remove("open");
+            okBtn.removeEventListener("click", onOk);
+            cancelBtn.removeEventListener("click", onCancel);
+            field.removeEventListener("keydown", onEnter);
+            resolve(value);
+          };
+          const onOk = () => close(field.value.trim());
+          const onCancel = () => close(null);
+          const onEnter = (e) => {
+            if (e.key === "Enter") close(field.value.trim());
+          };
+          okBtn.addEventListener("click", onOk);
+          cancelBtn.addEventListener("click", onCancel);
+          field.addEventListener("keydown", onEnter);
+          overlay.addEventListener(
+            "click",
+            (e) => {
+              if (e.target === overlay) close(null);
+            },
+            { once: true },
+          );
+        });
+      }
+    </script>
+
+    <script type="module" src="../scripts/course_view.js"></script>
+  </body>
+</html>

@@ -38,17 +38,17 @@
 }
 
 .nav-menu a {
+    display: block;
+    padding: 12px;
+    color: #7b26b1;
     text-decoration: none;
-    color: #334155;
-    padding: 11px 16px;
-    border-radius: 10px;
-    font-size: 14.5px;
-    transition: 0.2s ease;
+    border-radius: 8px;
+    margin-bottom: 8px;
 }
 
 .nav-menu a:hover,
 .nav-menu a.active {
-    background: #38bdf8;
+    background: #b46ff0;
     color: white;
 }
 
