@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <title>My Courses</title>
+
+    <link rel="stylesheet" href="../styles/navbar.css" />
+    <link rel="stylesheet" href="../styles/mycourse.css" />
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- NAVBAR -->
+      <nav class="navbar" id="sidebar">
+        <div class="nav-top">
+          <div class="nav-logo"><img src="../assets/fssa.png" style="width: 30px;margin-top:20px;"/> FSSA</div>
+
+          <button
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Toggle navigation"
+          >
+            ☰
+          </button>
+        </div>
+
+        <div class="nav-menu">
+          <a href="./dashboard.html">Dashboard</a>
+          <a class="active" href="./mycourse.html">My Course</a>
+          <a href="./attendence.html">Attendance</a>
+          <a href="./result.html">Test & Result</a>
+          <a href="./daily_practice.html">Daily Practice</a>
+        </div>
+      </nav>
+
+      <!-- MAIN -->
+      <main class="main">
+        <header class="header">
+          <div>
+            <h2>Hi! User</h2>
+            <small>Freshworks STS Software Academy</small>
+          </div>
+
+          <div class="user">
+            <div class="avatar">U</div>
+            <span>User</span>
+          </div>
+        </header>
+
+        <!-- SEARCH -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="search"
+            placeholder="Search courses..."
+            class="search-input"
+          />
+        </div>
+
+        <!-- COURSES -->
+        <section class="course-grid">
+           <!-- Populated by JS -->
+        </section>
+
+        <!-- NO RESULTS -->
+        <p id="noResults" class="no-results" style="display:none;">No courses found.</p>
+      </main>
+    </div>
+
+    <script src="../scripts/navbar.js" type="module"></script>
+    <script src="../scripts/mycourse.js" type="module"></script>
+  </body>
+</html>

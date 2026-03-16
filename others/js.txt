@@ -1,0 +1,428 @@
+document.addEventListener("DOMContentLoaded", () => {
+  // DOM Elements
+  const grid = document.querySelector(".courses-grid");
+  const searchInput = document.getElementById("search-courses");
+  const addModalToggle = document.getElementById("add-modal-toggle");
+  const editModalToggle = document.getElementById("edit-modal-toggle"); // Might not exist in new HTML
+  const deleteModalToggle = document.getElementById("delete-modal-toggle");
+  const studentModalToggle = document.getElementById("student-modal-toggle");
+  
+  const courseForm = document.getElementById("course-form");
+  const deleteForm = document.getElementById("delete-course-form");
+  const studentForm = document.getElementById("add-student-form");
+  
+  const modalTitle = document.getElementById("course-modal-title");
+  const modalSubmitBtn = document.getElementById("course-submit-btn");
+
+  // State
+  let courses = JSON.parse(localStorage.getItem("courses")) || [
+    {
+      id: "JS-101",
+      title: "JavaScript Fundamentals",
+      shortName: "JS",
+      batch: "Section C",
+      category: "Development",
+      visibility: "Show",
+      startDate: "2026-01-10",
+      endDate: "2026-04-10",
+      enableEndDate: true,
+      idNumber: "JS-101",
+      summary: "Master modern JavaScript with ES6+ features, async programming, and DOM manipulation.",
+      iconClass: "course-icon-javascript",
+      students: 45,
+      weeks: 12,
+      link: "./course-javascript.html"
+    },
+    {
+      id: "PY-101",
+      title: "Python Programming",
+      shortName: "PY",
+      batch: "Section A",
+      category: "Development",
+      visibility: "Show",
+      startDate: "2026-02-01",
+      endDate: "2026-06-01",
+      enableEndDate: true,
+      idNumber: "PY-101",
+      summary: "Learn Python from basics to advanced topics including OOP, data structures, and algorithms.",
+      iconClass: "course-icon-python",
+      students: 62,
+      weeks: 16,
+      link: "./course-python.html"
+    },
+    {
+      id: "UI-101",
+      title: "React Development",
+      shortName: "React",
+      batch: "Section B",
+      category: "Development",
+      visibility: "Show",
+      startDate: "2026-03-01",
+      endDate: "2026-05-15",
+      enableEndDate: true,
+      idNumber: "UI-101",
+      summary: "Build modern web applications with React, hooks, context API, and state management.",
+      iconClass: "course-icon-react",
+      students: 38,
+      weeks: 10,
+      link: "./course-react.html"
+    }
+  ];
+
+  let currentLinkAction = null; // For rendering links if needed
+  let editingCourseId = null;
+  let deletingCourseId = null;
+
+  // Icons SVG
+  const bookIcon = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 6.042c1.383-1.123 3.446-1.708 5.75-1.708 2.303 0 4.366.585 5.75 1.708v12.75c-1.383-1.123-3.446-1.708-5.75-1.708-2.303 0-4.366.585-5.75 1.708m0-12.75c-1.383-1.123-3.446-1.708-5.75-1.708-2.303 0-4.366.585-5.75 1.708v12.75c1.383-1.123 3.446-1.708 5.75-1.708 2.303 0 4.366.585 5.75 1.708M12 4.5v15.25" />
+    </svg>
+  `;
+
+  const usersIcon = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  `;
+
+  const clockIcon = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  `;
+
+  // Init
+  function init() {
+    renderCourses();
+    setupEventListeners();
+  }
+
+  // Render
+  function renderCourses(filterText = "") {
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    const filtered = courses.filter(course => {
+      const term = filterText.toLowerCase();
+      return (
+        course.title.toLowerCase().includes(term) ||
+        course.summary.toLowerCase().includes(term)
+      );
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<p class="text-muted" style="grid-column: 1/-1; text-align: center; padding: 40px;">No courses found.</p>`;
+      return;
+    }
+
+    filtered.forEach(course => {
+      const card = document.createElement("div");
+      card.className = "course-card cursor-pointer";
+      card.dataset.link = course.link || "#";
+      
+      // Determine Badge Class or default
+      const iconClass = course.iconClass || "course-icon-javascript"; // Default fallback
+
+      card.innerHTML = `
+        <div class="course-header">
+          <div class="course-icon ${iconClass}">
+            ${bookIcon}
+          </div>
+          <div class="course-badge">${course.batch || "N/A"}</div>
+        </div>
+        <h3 class="course-title">
+          <a href="${course.link || '#'}" class="course-link">${course.title}</a>
+        </h3>
+        <p class="course-description">
+          ${course.summary}
+        </p>
+        <div class="course-meta">
+          <div class="meta-item">
+            ${usersIcon}
+            <span>${course.students} Students</span>
+          </div>
+          <div class="meta-item">
+            ${clockIcon}
+            <span>${course.weeks} Weeks</span>
+          </div>
+        </div>
+        <div class="course-actions">
+          <div class="visibility-container">
+            <label class="visibility-btn" title="Toggle Student Visibility">
+              <input type="checkbox" ${course.visibility === "Show" ? "checked" : ""} class="visibility-checkbox" data-id="${course.id}" />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <button type="button" class="btn-enroll cursor-pointer stop-prop" data-id="${course.id}">Add Student</button>
+          <button type="button" class="edit cursor-pointer stop-prop" data-id="${course.id}">Edit</button>
+          <button type="button" class="delete cursor-pointer stop-prop" data-id="${course.id}">Delete</button>
+        </div>
+      `;
+
+      // Attach Card Click for navigation (excluding actions)
+      card.addEventListener("click", (e) => {
+        if (!e.target.closest(".stop-prop") && !e.target.closest(".visibility-btn") && !e.target.closest("a")) {
+          if (course.link) window.location.href = course.link;
+        }
+      });
+
+      grid.appendChild(card);
+    });
+
+    attachDynamicEvents();
+  }
+
+  function attachDynamicEvents() {
+    // Edit Buttons
+    document.querySelectorAll(".course-actions .edit").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        openEditModal(id);
+      });
+    });
+
+    // Delete Buttons
+    document.querySelectorAll(".course-actions .delete").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        openDeleteModal(id);
+      });
+    });
+
+    // Enroll Buttons
+    document.querySelectorAll(".btn-enroll").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        // Just open the student modal
+        if (studentModalToggle) studentModalToggle.checked = true;
+        
+        // Pre-select course in dropdown
+        const course = courses.find(c => c.id === btn.dataset.id);
+        if (course) {
+             const select = document.getElementById("student-course-select");
+             if(select) {
+                 // Try to find matching option by value (lowercase) or text
+                 Array.from(select.options).some((opt, i) => {
+                     // Simple heuristic: check if connection is loose 
+                     if (course.title.toLowerCase().includes(opt.value) || opt.value.includes(course.title.toLowerCase())) {
+                       select.selectedIndex = i;
+                       return true;
+                     }
+                 });
+             }
+        }
+      });
+    });
+
+    // Visibility Toggles
+    document.querySelectorAll(".visibility-checkbox").forEach(chk => {
+      chk.addEventListener("change", (e) => {
+        e.stopPropagation(); // prevent card click
+        const id = chk.dataset.id;
+        toggleVisibility(id, chk.checked);
+      });
+    });
+  }
+
+  function setupEventListeners() {
+    // Search
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        renderCourses(e.target.value);
+      });
+    }
+
+    // Add Course Button (Label)
+    // We listen to the label click? No, the label toggles the checkbox. 
+    // We can listen to the checkbox change state to "checked"
+    if (addModalToggle) {
+        addModalToggle.addEventListener('change', (e) => {
+            if(addModalToggle.checked && editingCourseId === null) {
+                // If checking the toggle and NOT editing, reset form (Add Mode)
+                 resetCourseForm();
+                 modalTitle.textContent = "Add New Course";
+                 modalSubmitBtn.textContent = "Create Course";
+            }
+        });
+    }
+    
+    // Also listen to the "Add Course" button explicitly if it's not just a label
+    // In index.html line 381: <label for="add-modal-toggle" class="btn-primary">+ Add Course</label>
+    // Clicking this toggles the checkbox.
+
+    const addBtnLabel = document.querySelector('label[for="add-modal-toggle"].btn-primary');
+    if (addBtnLabel) {
+        addBtnLabel.addEventListener('click', () => {
+             editingCourseId = null; // Reset edit mode
+        });
+    }
+
+    // Course Form Submit
+    if (courseForm) {
+      courseForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleCourseSubmit();
+      });
+    }
+
+    // Delete Form Submit
+    if (deleteForm) {
+      deleteForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        confirmDelete();
+      });
+    }
+
+    // Student Form Submit
+    if (studentForm) {
+      studentForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert("Student enrolled successfully! (Demo)");
+        studentForm.reset();
+        studentModalToggle.checked = false;
+        // Ideally update student count here if we track it properly per course
+      });
+    }
+  }
+
+  // --- Logic Functions ---
+
+  function openEditModal(id) {
+    const course = courses.find(c => c.id === id);
+    if (!course) return;
+
+    editingCourseId = id;
+    
+    // Populate Form
+    document.getElementById("course-fullname").value = course.title || "";
+    document.getElementById("course-shortname").value = course.shortName || "";
+    document.getElementById("course-batch").value = course.batch || "";
+    document.getElementById("course-category").value = course.category || "Development";
+    document.getElementById("course-visibility").value = course.visibility || "Show";
+    document.getElementById("course-startdate").value = course.startDate || "";
+    document.getElementById("course-enddate").value = course.endDate || "";
+    document.getElementById("course-id").value = course.idNumber || "";
+    document.getElementById("course-summary").value = course.summary || "";
+    
+    const enableEndCheck = document.getElementById("enable-end-date");
+    if(enableEndCheck) enableEndCheck.checked = !!course.enableEndDate;
+
+    // UI Updates
+    if (modalTitle) modalTitle.textContent = "Edit Course";
+    if (modalSubmitBtn) modalSubmitBtn.textContent = "Save Changes";
+
+    // Show Modal
+    if (addModalToggle) addModalToggle.checked = true;
+  }
+
+  function resetCourseForm() {
+    if (courseForm) courseForm.reset();
+    editingCourseId = null;
+  }
+
+  function handleCourseSubmit() {
+    // Gather Data
+    const title = document.getElementById("course-fullname").value;
+    const shortName = document.getElementById("course-shortname").value;
+    const batch = document.getElementById("course-batch").value;
+    const category = document.getElementById("course-category").value;
+    const visibility = document.getElementById("course-visibility").value;
+    const startDate = document.getElementById("course-startdate").value;
+    const endDate = document.getElementById("course-enddate").value;
+    const enableEndDate = document.getElementById("enable-end-date")?.checked;
+    const idNumber = document.getElementById("course-id").value;
+    const summary = document.getElementById("course-summary").value;
+
+    const newCourseData = {
+      title,
+      shortName,
+      batch,
+      category,
+      visibility,
+      startDate,
+      endDate,
+      enableEndDate,
+      idNumber,
+      summary,
+      // Default / Calc fields
+      students: 0, 
+      weeks: 12, 
+      link: "#", // No link for new courses in this demo
+      iconClass: "course-icon-javascript" // Default icon
+    };
+
+    if (editingCourseId) {
+      // Update Existing
+      const index = courses.findIndex(c => c.id === editingCourseId);
+      if (index !== -1) {
+        courses[index] = { ...courses[index], ...newCourseData }; 
+        // Preserve unedited fields like students/weeks/link if not in form
+        // (Actually the form doesn't edit students/links, so we should merge carefully)
+        // Better:
+        courses[index].title = title;
+        courses[index].shortName = shortName;
+        courses[index].batch = batch;
+        courses[index].category = category;
+        courses[index].visibility = visibility;
+        courses[index].startDate = startDate;
+        courses[index].endDate = endDate;
+        courses[index].enableEndDate = enableEndDate;
+        courses[index].idNumber = idNumber;
+        courses[index].summary = summary;
+      }
+    } else {
+      // Create New
+      newCourseData.id = "COURSE-" + Date.now(); // Simple ID
+      courses.push(newCourseData);
+    }
+
+    saveAndRender();
+    if (addModalToggle) addModalToggle.checked = false;
+    resetCourseForm();
+  }
+
+  function openDeleteModal(id) {
+    deletingCourseId = id;
+    if (deleteModalToggle) deleteModalToggle.checked = true;
+  }
+
+  function confirmDelete() {
+    if (deletingCourseId) {
+      courses = courses.filter(c => c.id !== deletingCourseId);
+      saveAndRender();
+      deletingCourseId = null;
+    }
+    if (deleteModalToggle) deleteModalToggle.checked = false;
+  }
+
+  function toggleVisibility(id, isVisible) {
+    const course = courses.find(c => c.id === id);
+    if (course) {
+      course.visibility = isVisible ? "Show" : "Hide";
+      saveCourses();
+      // No re-render needed if we just toggle state, but maybe UI updates? 
+      // The checkbox is already handled by browser. 
+      // If "Hide" means "Remove from Grid", then yes re-render. 
+      // Assuming "Visibility" in this app context is just a property, not removing it for Admin.
+    }
+  }
+
+  function saveAndRender() {
+    saveCourses();
+    renderCourses(searchInput ? searchInput.value : "");
+  }
+
+  function saveCourses() {
+    localStorage.setItem("courses", JSON.stringify(courses));
+  }
+
+  // Run
+  init();
+});

@@ -1,0 +1,103 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, sans-serif;
+}
+
+/* Layout */
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f3f4f6;
+}
+
+/* Sidebar */
+.navbar {
+    width: 240px;
+    background: #e5e7eb;
+    padding: 20px 16px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Logo */
+.nav-logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 34px;
+}
+
+/* Menu */
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #334155;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 14.5px;
+    transition: 0.2s ease;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    background: #38bdf8;
+    color: white;
+}
+
+/* Sidebar default */
+.navbar {
+    width: 240px;
+    background: #e5e7eb;
+    padding: 18px 14px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.25s ease;
+}
+
+/* Closed = only thin strip */
+.navbar.collapsed {
+    width: 52px;
+    padding: 18px 6px;
+}
+
+/* Top row */
+.nav-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Center hamburger when collapsed */
+.navbar.collapsed .nav-top {
+    justify-content: center;
+}
+
+/* Hide logo */
+.navbar.collapsed .nav-logo {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+/* Hide menu fully */
+.navbar.collapsed .nav-menu {
+    display: none;
+}
+
+/* Toggle button */
+.nav-toggle {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #111827;
+}

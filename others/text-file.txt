@@ -1,0 +1,678 @@
+html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Students Dashboard</title>
+    <link rel="stylesheet" href="../styles/admin_course.css" />
+    <link rel="stylesheet" href="../styles/admin_navbar.css" />
+  </head>
+
+  <body>
+    <!-- Course Modal (Shared for Add & Edit) -->
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <label for="add-modal-toggle" class="modal-close">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 6L6 18M6 6l12 12"></path>
+          </svg>
+        </label>
+        <div class="modal-header">
+          <h2 id="course-modal-title">Add New Course</h2>
+        </div>
+        <form class="modal-body" id="course-form">
+          <div class="form-section">
+            <h3>General</h3>
+            <div class="form-group">
+              <label for="course-fullname">Course full name</label>
+              <input type="text" id="course-fullname" required />
+            </div>
+            <div class="form-group">
+              <label for="course-shortname">Course short name</label>
+              <input type="text" id="course-shortname" required />
+            </div>
+            <div class="form-group">
+              <label for="course-category">Course category</label>
+              <select id="course-category">
+                <option>No selection</option>
+                <option>Development</option>
+                <option>Design</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="course-visibility">Course visibility</label>
+              <select id="course-visibility">
+                <option>Show</option>
+                <option>Hide</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="course-startdate">Course start date</label>
+              <input type="date" id="course-startdate" />
+            </div>
+            <div class="form-group">
+              <label for="course-enddate">Course end date</label>
+              <div class="flex-align-center">
+                <input type="checkbox" id="enable-end-date" class="w-auto" />
+                <label for="enable-end-date" class="mb-0">Enable</label>
+              </div>
+              <input type="date" id="course-enddate" />
+            </div>
+            <div class="form-group">
+              <label for="course-id">Course ID number</label>
+              <input type="text" id="course-id" />
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Description</h3>
+            <div class="form-group">
+              <label for="course-summary">Course summary</label>
+              <textarea
+                rows="4"
+                class="textarea-styled"
+                id="course-summary"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Attachments</h3>
+            <div class="form-group">
+              <label for="course-files">Course files</label>
+              <input
+                type="file"
+                multiple
+                class="input-file"
+                id="course-files"
+              />
+              <p class="text-xs text-muted mt-5">
+                Allowed types: PDF, DOCX, ZIP, JPG, PNG.
+              </p>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <label for="add-modal-toggle" class="btn-secondary">Cancel</label>
+            <button type="submit" class="btn-primary" id="course-submit-btn">
+              Create Course
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <input type="checkbox" id="delete-modal-toggle" />
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <label for="delete-modal-toggle" class="modal-close">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 6L6 18M6 6l12 12"></path>
+          </svg>
+        </label>
+        <div class="modal-header">
+          <h2>Delete Course</h2>
+        </div>
+        <div class="modal-body">
+          <p>
+            Are you sure you want to delete this course? This action cannot be
+            undone.
+          </p>
+          <div class="modal-footer">
+            <label for="delete-modal-toggle" class="btn-secondary"
+              >Cancel</label
+            >
+            <form action="" class="display-inline">
+              <button type="submit" class="delete p-10-20">Yes, Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Modal -->
+    <input type="checkbox" id="student-modal-toggle" />
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <label for="student-modal-toggle" class="modal-close">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 6L6 18M6 6l12 12"></path>
+          </svg>
+        </label>
+        <div class="modal-header">
+          <h2>Add New Student</h2>
+        </div>
+        <form class="modal-body" id="add-student-form">
+          <div class="form-section">
+            <h3>Student Details</h3>
+            <div class="form-group">
+              <label for="student-fullname">Full Name</label>
+              <input
+                type="text"
+                placeholder="Enter student's name"
+                required
+                id="student-fullname"
+              />
+            </div>
+            <div class="form-group">
+              <label for="student-email">Email Address</label>
+              <input
+                type="email"
+                placeholder="student@example.com"
+                required
+                id="student-email"
+              />
+            </div>
+            <div class="form-group">
+              <label for="student-id">Student ID</label>
+              <input
+                type="text"
+                placeholder="FSSA-2026-001"
+                required
+                id="student-id"
+              />
+            </div>
+            <div class="form-group">
+              <label for="student-course-select">Select Course</label>
+              <select id="student-course-select">
+                <option value="javascript">JavaScript Fundamentals</option>
+                <option value="python">Python Programming</option>
+                <option value="react">React Development</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <label for="student-modal-toggle" class="btn-secondary"
+              >Cancel</label
+            >
+            <button type="submit" class="btn-primary">Enroll Student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <h1 class="logo">
+        <img src="../assets/fssa.png" style="width: 30px; margin-top: 2px" />
+        FSSA
+      </h1>
+
+      <nav>
+        <a>Dashboard</a>
+        <a class="active">Courses</a>
+        <a>Students</a>
+        <a>Attendance</a>
+        <a>Results</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <!-- SEARCH + FILTER TRIGGER -->
+      <section class="card row-between mb-20">
+        <div class="search-filter-section">
+          <div class="search-container">
+            <svg
+              class="search-icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <label for="search-courses" class="sr-only">Search courses</label>
+            <input
+              type="text"
+              id="search-courses"
+              class="search-input"
+              placeholder="Search courses..."
+            />
+          </div>
+        </div>
+        <label for="add-modal-toggle" class="btn-primary">+ Add Course</label>
+      </section>
+
+      <section class="courses-grid">
+        <!-- Courses will be rendered here by script.js -->
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+css
+/* =====================================================
+   RESET + BASE
+===================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  background: #f6f7fb;
+  color: #1f2933;
+  display: flex;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #000;
+
+  padding: 24px 18px;
+
+  display: flex;
+  flex-direction: column;
+
+  border-right: 1px solid #e5e7eb;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 22px;
+  font-weight: 600;
+
+  margin-bottom: 35px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+
+  padding: 12px 16px;
+
+  color: #7b26b1;
+
+  border-radius: 10px;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover {
+  background: #b46ff0;
+  color: #ffffff;
+}
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
+
+.main {
+  flex: 1;
+  padding: 30px;
+}
+
+/* =====================================================
+   CARD + LAYOUT UTILS
+===================================================== */
+
+.card {
+  background: white;
+  padding: 18px 22px;
+  border-radius: 14px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+}
+
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 9px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  padding: 10px 18px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.delete {
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.delete:hover {
+  background: #b91c1c;
+}
+
+/* =====================================================
+   SEARCH BAR
+===================================================== */
+
+.search-filter-section {
+  width: 320px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.search-icon {
+  margin-right: 8px;
+  color: #64748b;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+}
+
+/* =====================================================
+   COURSES GRID
+===================================================== */
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Course Card (JS Rendered) */
+.course-card {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.course-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.course-meta {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.course-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+/* =====================================================
+   MODALS
+===================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+input[type="checkbox"]:checked + .modal-overlay {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  width: 540px;
+  max-width: 95%;
+  border-radius: 16px;
+  padding: 25px;
+  position: relative;
+  animation: popIn 0.25s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+}
+
+/* Close */
+.modal-close {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  cursor: pointer;
+}
+
+/* =====================================================
+   MODAL HEADERS
+===================================================== */
+
+.modal-header h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+/* =====================================================
+   FORMS
+===================================================== */
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-section h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #334155;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.textarea-styled {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.textarea-styled:focus {
+  border-color: #2563eb;
+}
+
+.input-file {
+  border: none;
+}
+
+/* =====================================================
+   FORM UTILS
+===================================================== */
+
+.flex-align-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.w-auto {
+  width: auto;
+}
+
+.display-inline {
+  display: inline;
+}
+
+/* =====================================================
+   MODAL FOOTER
+===================================================== */
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* =====================================================
+   TEXT UTILS
+===================================================== */
+
+.text-xs {
+  font-size: 12px;
+}
+
+.text-muted {
+  color: #6b7280;
+}
+
+.mt-5 {
+  margin-top: 5px;
+}
+
+/* =====================================================
+   ACCESSIBILITY
+===================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+navbar.css
+/* SIDEBAR */
+
+.sidebar {
+  width:240px;
+  background:#ffffff;
+  color:rgb(0, 0, 0);
+  padding:20px;
+}
+
+.logo {
+  font-size:22px;
+  margin-bottom:30px;
+}
+
+.sidebar a {
+  display:block;
+  padding:12px;
+  color:#7b26b1;
+  text-decoration:none;
+  border-radius:8px;
+  margin-bottom:8px;
+}
+
+.sidebar a.active,
+.sidebar a:hover {
+  background:#b46ff0;
+  color:white;
+}
