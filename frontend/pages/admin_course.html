@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Courses</title>
+
+    <link rel="stylesheet" href="../styles/admin_course.css" />
+    <link rel="stylesheet" href="../styles/admin_navbar.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="navbar" id="sidebar">
+        <div class="nav-top">
+          <div class="nav-logo">
+            <img
+              src="../assets/fssa.png"
+              style="width: 30px; margin-top: 20px"
+            />
+            FSSA
+          </div>
+          <button
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Toggle navigation"
+          >
+            ☰
+          </button>
+        </div>
+        <div class="nav-menu">
+          <a href="./dashboard.html">Dashboard</a>
+          <a class="active" href="./admin_course.html">My Course</a>
+          <a href="./attendence.html">Students</a>
+          <a href="./result.html">Attendence</a>
+          <a href="./daily_practice.html">Results</a>
+        </div>
+      </nav>
+
+      <main>
+        <header class="topbar">
+          <input id="searchInput" placeholder="Search courses..." />
+          <button id="openAddCourse" class="primary">+ Add Course</button>
+        </header>
+
+        <section id="coursesGrid" class="grid"></section>
+      </main>
+    </div>
+
+    <!-- COURSE MODAL -->
+    <div id="courseModal" class="modal">
+      <div class="modal-box">
+        <h2>Add Course</h2>
+        <form id="addForm">
+          <label for="addFull">Course Full Name</label>
+          <input id="addFull" placeholder="Course full name" required />
+
+          <label for="addVisibility">Visibility</label>
+          <select id="addVisibility">
+            <option>Show</option>
+            <option>Hide</option>
+          </select>
+
+          <label for="addStart">Start Date</label>
+          <input id="addStart" type="date" />
+
+          <label for="addEnd">End Date</label>
+          <input id="addEnd" type="date" />
+
+          <label for="addId">Course ID</label>
+          <input id="addId" placeholder="Course ID" />
+
+          <label for="addSummary">Summary</label>
+          <textarea id="addSummary" placeholder="Summary"></textarea>
+
+          <div class="modal-actions">
+            <button type="button" id="closeCourse">Cancel</button>
+            <button class="primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- STUDENT MODAL -->
+    <div id="studentModal" class="modal">
+      <div class="modal-box">
+        <h2>Add Student</h2>
+        <form id="studentForm">
+          <label for="studentBatch">Batch / Section</label>
+          <select id="studentBatch">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </select>
+
+          <div class="modal-actions">
+            <button type="button" id="closeStudent">Cancel</button>
+            <button class="primary">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="../scripts/admin_course.js" type="module"></script>
+    <script src="../scripts/navbar.js" type="module"></script>
+  </body>
+</html>

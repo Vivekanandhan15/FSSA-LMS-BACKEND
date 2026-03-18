@@ -1,0 +1,172 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+    color: #000000;
+    background-color: #ffffff;
+    line-height: 1.6;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 60px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0083f5;
+}
+
+.navbar nav a {
+    margin-left: 24px;
+    text-decoration: none;
+    color: #000000;
+    font-weight: 500;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    background-color: #0083f5;
+    color: #ffffff;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    background-color: transparent;
+    color: #0083f5;
+    border: 2px solid #0083f5;
+    border-radius: 25px;
+    margin-left: 12px;
+    cursor: pointer;
+}
+
+/* HERO */
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 80px 60px;
+    gap: 40px;
+}
+
+.hero-text {
+    max-width: 560px;
+}
+
+.hero-text h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero-text p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.hero-image img {
+    width: 420px;
+    /* reduced, same shape */
+    border-radius: 50% 0 50% 50%;
+}
+
+/* SECTIONS */
+.section-title {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 40px;
+}
+
+.features {
+    padding: 70px 60px;
+    background-color: #fafafa;
+}
+
+.feature-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.feature {
+    max-width: 300px;
+    text-align: center;
+}
+
+/* STATS */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    padding: 60px 0;
+}
+
+.stat h2 {
+    color: #f57c00;
+    font-size: 36px;
+}
+
+/* FOOTER */
+.footer {
+    background-color: #111;
+    color: #ccc;
+    padding: 40px 60px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.footer h4 {
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.footer a {
+    display: block;
+    color: #ccc;
+    text-decoration: none;
+    margin-bottom: 6px;
+}
+
+.footer a:hover {
+    color: #f57c00;
+}
+
+.copyright {
+    text-align: center;
+    font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-image img {
+        width: 300px;
+    }
+
+    .feature-grid,
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | FSSA LMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="../styles/style.css" />
+  <link rel="stylesheet" href="../styles/login.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="../assets/fssa.png" alt="logo" style="width: 35px; height: 30px" />
+      FSSA
+    </div>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="../pages/mycourse.html">Courses</a>
+    </nav>
+  </header>
+
+  <!-- LOGIN -->
+  <main class="login-wrapper">
+    <div class="login-box">
+      <div class="login-header">
+        <img src="../assets/fssa.png" alt="FSSA logo" />
+        <h1>Sign in to FSSA LMS</h1>
+      </div>
+
+      <form>
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" placeholder="student@fssa.org" required />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" placeholder="Enter password" required />
+        </div>
+
+        <button class="btn-primary login-btn">Sign In</button>
+      </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <div id="g_id_onload" data-client_id="309543081255-ub0pfkickicfcd1c3tjj9jlashvf1vst.apps.googleusercontent.com"
+        data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false">
+      </div>
+
+      <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+        data-text="signin_with" data-size="large" data-logo_alignment="left">
+      </div>
+
+      <div class="login-footer">
+        <p><a href="#">Forgot password?</a></p>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>@copyright Freshworks STS Software Academy</p>
+  </footer>
+
+  <script src="../scripts/auth.js" type="module"></script>
+  <script>
+    // Essential for Google Identity Services to find the callback
+    // This script runs before/with modules and ensures the function is on window
+    import('../scripts/auth.js').then(module => {
+      window.handleCredentialResponse = module.handleCredentialResponse;
+    });
+  </script>
+  <script type="module">
+    import { login } from '../scripts/auth.js';
+
+    const form = document.querySelector("form");
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = form.querySelector('input[type="email"]').value;
+        const password = form.querySelector('input[type="password"]').value;
+        login(email, password);
+      });
+    }
+  </script>
+</body>
+
+</html>
