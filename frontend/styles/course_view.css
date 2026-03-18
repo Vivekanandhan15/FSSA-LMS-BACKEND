@@ -960,3 +960,41 @@ body.edit-locked .editable-element {
         display: none;
     }
 }
+
+
+
+/* ── Admin Hide/Show Buttons ── */
+.admin-toggle-btn {
+  display: inline-block;         /* Already handled in JS */
+  padding: 4px 10px;             /* Makes it look like a box */
+  margin-left: 10px;             /* Space from the title */
+  border: 1px solid #ccc;        /* Border around button */
+  border-radius: 6px;            /* Rounded corners */
+  background-color: #d7d8ff;     /* Light box background */
+  color: #333;                   /* Text color */
+  font-size: 0.85rem;            /* Slightly smaller text */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-toggle-btn:hover {
+  background-color: #e2e6ea;
+  border-color: #b0b3b8;
+}
+
+/* Optional: Style Add Topic buttons similarly */
+.add-topic-btn-section {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f0f4f8;
+  color: #333;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-topic-btn-section:hover {
+  background-color: #dce1e7;
+  border-color: #b0b3b8;
+}
