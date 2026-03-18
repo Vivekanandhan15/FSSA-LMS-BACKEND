@@ -272,12 +272,10 @@ window.saveContent = function () {
   closeEditor();
 };
 
-// ✅ CLOSE EDITOR
 window.closeEditor = function () {
   document.getElementById("editor-modal").classList.remove("open");
 };
 
-// ✅ SAVE TO DATABASE
 async function saveToDatabase() {
   try {
     const res = await fetch(`${API_BASE_URL}/courses/${currentCourseData.id}`, {
