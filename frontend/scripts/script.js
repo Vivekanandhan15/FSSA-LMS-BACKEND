@@ -1,1 +1,0 @@
-console.log("FSSA LMS landing page loaded successfully");
