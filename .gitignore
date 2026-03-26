@@ -1,13 +1,37 @@
-# Python
+# Environments
+lmsenv/
+env/
+venv/
+.venv/
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-venv/
+
+# Environment Variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# MacOS
-.DS_Store
+# Databases
+*.sqlite3
+db.sqlite3
 
-# IDE
+# IDEs and Editors
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Testing and Coverage
+.pytest_cache/
+htmlcov/
+.coverage
+.tox/
