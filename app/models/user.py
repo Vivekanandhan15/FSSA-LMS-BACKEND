@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, String
+from sqlalchemy import Column, DateTime, String, Boolean
 from app.db.database import Base
 
 class User(Base):
@@ -11,4 +11,5 @@ class User(Base):
     email = Column(String, unique=True)
     password = Column(String)
     role = Column(String)
+    is_first_login = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)

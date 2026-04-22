@@ -1,12 +1,47 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db.database import SessionLocal
 from app.db.database import get_db 
-from app.schemas.user import UserCreate, UserOut
-from app.services.user import create_user, get_users, get_user, update_user, delete_user
+from app.schemas.user import UserCreate, UserOut, UserLogin, ChangePasswordRequest
+from app.services.user import create_user, get_users, get_user, update_user, delete_user, get_user_by_email
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
+# ─── AUTHENTICATION ROUTE ──────────────────────────────────────────
+
+@router.post("/login")
+def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
+    # 1. Find the user by email
+    user = get_user_by_email(db, email=user_credentials.email)
+    
+    # 2. Check if user exists and password matches
+    if not user or user.password != user_credentials.password:
+        raise HTTPException(
+            status_code=401, 
+            detail="Invalid email or password"
+        )
+        
+    # 3. Return the user info back to React!
+    return {
+        "message": "Login successful",
+        "role": user.role,
+        "name": user.name,
+        "is_first_login": user.is_first_login
+    }
+
+@router.post("/change-password")
+def change_password(data: ChangePasswordRequest, db: Session = Depends(get_db)):
+    user = get_user_by_email(db, email=data.email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.password = data.new_password
+    user.name = data.name
+    user.is_first_login = False
+    
+    db.commit()
+    return {"message": "Password changed successfully"}
+
+# ─── STANDARD CRUD ROUTES ──────────────────────────────────────────
 
 @router.post("/", response_model=UserOut)
 def add_user(data: UserCreate, db: Session = Depends(get_db)):

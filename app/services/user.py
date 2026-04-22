@@ -26,3 +26,6 @@ def delete_user(db: Session, user_id: str):
     obj = get_user(db, user_id)
     db.delete(obj)
     db.commit()
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()

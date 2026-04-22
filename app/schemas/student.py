@@ -7,13 +7,16 @@ class StudentCreate(BaseModel):
     email: str
     batch: str
     section: str
-    courses_enrolled: str
     status: str
 
+class StudentUpdate(BaseModel):
+    full_name: str | None = None
+    email: str | None = None
+    batch: str | None = None
+    section: str | None = None
+    status: str | None = None
 
-# ✅ Response / Output
 class StudentResponse(StudentCreate):
     id: int
-
     class Config:
-        from_attributes = True   # for SQLAlchemy
+        from_attributes = True

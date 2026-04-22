@@ -9,5 +9,4 @@ class Student(Base):
     email = Column(String, unique=True, nullable=False)
     batch = Column(String, nullable=False)
     section = Column(String, nullable=False)
-    courses_enrolled = Column(String, nullable=False)
     status = Column(String, nullable=False)
