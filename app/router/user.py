@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db 
-from app.schemas.user import UserCreate, UserOut, UserLogin, ChangePasswordRequest
+from app.schemas.user import UserCreate, UserOut, UserLogin, ChangePasswordRequest, ResetPasswordRequest
 from app.services.user import create_user, get_users, get_user, update_user, delete_user, get_user_by_email
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -40,6 +40,18 @@ def change_password(data: ChangePasswordRequest, db: Session = Depends(get_db)):
     
     db.commit()
     return {"message": "Password changed successfully"}
+
+@router.post("/reset-password")
+def reset_password(data: ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = get_user_by_email(db, email=data.email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.password = "student123"
+    user.is_first_login = True
+    
+    db.commit()
+    return {"message": "Password reset to default (student123)"}
 
 # ─── STANDARD CRUD ROUTES ──────────────────────────────────────────
 

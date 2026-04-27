@@ -2,15 +2,17 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from sqlalchemy.orm import Session
 import pandas as pd
 from typing import List
+import uuid
+import io
 
 from app.db.database import get_db
 from app.models.student_model import Student
+from app.models.user import User
 from app.schemas.student import StudentCreate, StudentResponse, StudentUpdate
 
 router = APIRouter(prefix="/students", tags=["Students"])
 
 
-# ✅ CREATE SINGLE
 # ✅ CREATE SINGLE
 @router.post("/", response_model=StudentResponse)
 def create_student(student: StudentCreate, db: Session = Depends(get_db)):
@@ -20,6 +22,18 @@ def create_student(student: StudentCreate, db: Session = Depends(get_db)):
 
     new_student = Student(**student.dict())
     db.add(new_student)
+    
+    # Also create a User record so they can login
+    new_user = User(
+        user_id=str(uuid.uuid4()),
+        name=student.full_name,
+        email=student.email,
+        password="student123",
+        role="student",
+        is_first_login=True
+    )
+    db.add(new_user)
+    
     db.commit()
     db.refresh(new_student)
     return new_student
@@ -31,40 +45,69 @@ async def upload_students(
     batch: str = Form(...), # <-- We now grab the batch manually from the form!
     db: Session = Depends(get_db)
 ):
-    if not file.filename.endswith((".xlsx", ".xls")):
-        raise HTTPException(status_code=400, detail="Only Excel files allowed")
+    print(f"DEBUG: Received upload request. Filename: {file.filename}, Batch: {batch}")
+    try:
+        contents = await file.read()
+        print(f"DEBUG: File read. Size: {len(contents)} bytes")
+        
+        df = pd.read_excel(io.BytesIO(contents), engine="openpyxl")
+        print(f"DEBUG: Excel parsed. Rows: {len(df)}")
 
-    contents = await file.read()
-    df = pd.read_excel(contents)
+        required_columns = ["full_name", "email", "section", "status"]
+        for col in required_columns:
+            if col not in df.columns:
+                print(f"DEBUG: Missing column: {col}")
+                raise HTTPException(status_code=400, detail=f"Missing column in Excel: {col}")
 
-    # Removed 'batch' and 'courses_enrolled' from required columns
-    required_columns = ["full_name", "email", "section", "status"]
+        for _, row in df.iterrows():
+            email = str(row["email"]).strip()
+            print(f"DEBUG: Processing student: {email}")
+            existing = db.query(Student).filter(Student.email == email).first()
+            if existing:
+                print(f"DEBUG: Student already exists: {email}")
+                continue
 
-    for col in required_columns:
-        if col not in df.columns:
-            raise HTTPException(status_code=400, detail=f"Missing column in Excel: {col}")
+            student = Student(
+                full_name=row["full_name"],
+                email=email,
+                batch=batch,
+                section=row["section"],
+                status=row["status"]
+            )
+            db.add(student)
 
-    for _, row in df.iterrows():
-        existing = db.query(Student).filter(Student.email == row["email"]).first()
-        if existing:
-            continue
+            new_user = User(
+                user_id=str(uuid.uuid4()),
+                name=row["full_name"],
+                email=email,
+                password="student123",
+                role="student",
+                is_first_login=True
+            )
+            db.add(new_user)
 
-        student = Student(
-            full_name=row["full_name"],
-            email=row["email"],
-            batch=batch, # <-- Applied manually here
-            section=row["section"],
-            status=row["status"]
-        )
-        db.add(student)
+        db.commit()
+        print("DEBUG: Commit successful")
+        return {"message": "Students uploaded successfully 🚀"}
+    except Exception as e:
+        print(f"DEBUG: ERROR during upload: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
-    db.commit()
-    return {"message": "Students uploaded successfully 🚀"}
-
-# ✅ GET ALL
-@router.get("/", response_model=List[StudentResponse])
-def get_students(db: Session = Depends(get_db)):
-    return db.query(Student).all()
+# ✅ GET ALL (with Pagination)
+@router.get("/")
+def get_students(skip: int = 0, limit: int = 8, db: Session = Depends(get_db)):
+    total = db.query(Student).count()
+    students = db.query(Student).offset(skip).limit(limit).all()
+    return {
+        "total": total,
+        "skip": skip,
+        "limit": limit,
+        "students": students
+    }
 
 
 # ✅ GET ONE
